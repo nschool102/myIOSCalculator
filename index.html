@@ -33,9 +33,9 @@ body { display: flex; flex-direction: column; }
 .hdr-icon { font-size: 22px; }
 .hdr h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.3px; }
 .hdr-sub { font-size: 12px; color: var(--text3); margin-left: auto; }
-.tabs-wrap { background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-shrink: 0; }
+.tabs-wrap { background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-shrink: 0; }
 .tabs-wrap::-webkit-scrollbar { display: none; }
-.tabs { display: flex; width: max-content; padding: 0 8px; }
+.tabs { display: flex; flex-wrap: wrap; width: 100%; padding: 0 8px; gap: 4px;}
 .tab { padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--text3); white-space: nowrap; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--safe-bottom) + 16px); }
