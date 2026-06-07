@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Máy Tính">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a2e">
+<title>Máy Tính của Tao</title>
+<style>
+:root {
+  --bg: #0f0f1a;
+  --surface: #1a1a2e;
+  --surface2: #16213e;
+  --card: #1f2940;
+  --accent: #6c63ff;
+  --accent2: #ff6584;
+  --accent3: #43e97b;
+  --text: #f0f0ff;
+  --text2: #9999bb;
+  --text3: #6666aa;
+  --border: rgba(108,99,255,0.2);
+  --input-bg: #0d0d1f;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: -apple-system, 'SF Pro Display', sans-serif; }
+body { display: flex; flex-direction: column; }
+.hdr { background: var(--surface); padding: calc(var(--safe-top) + 12px) 16px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.hdr-icon { font-size: 22px; }
+.hdr h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.3px; }
+.hdr-sub { font-size: 12px; color: var(--text3); margin-left: auto; }
+.tabs-wrap { background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-shrink: 0; }
+.tabs-wrap::-webkit-scrollbar { display: none; }
+.tabs { display: flex; width: max-content; padding: 0 8px; }
+.tab { padding: 10px 14px; font-size: 12px; font-weight: 500; color: var(--text3); white-space: nowrap; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.content { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: calc(var(--safe-bottom) + 16px); }
+.panel { display: none; padding: 16px; }
+.panel.active { display: block; }
+.card { background: var(--card); border-radius: 14px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+.card-title { font-size: 12px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.field { margin-bottom: 12px; }
+.field label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; font-weight: 500; }
+.field input, .field select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 15px; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+.field input:focus { border-color: var(--accent); }
+.field input[readonly] { color: var(--text2); }
+.field input.result-field { color: var(--accent3); font-weight: 600; font-size: 16px; }
+.result-grid { display: grid; gap: 10px; }
+.result-row { background: var(--surface2); border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+.result-label { font-size: 13px; color: var(--text2); }
+.result-val { font-size: 16px; font-weight: 700; color: var(--accent3); font-variant-numeric: tabular-nums; }
+.result-val.neg { color: var(--accent2); }
+.result-val.accent { color: var(--accent); }
+.calc-inputs { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: end; margin-bottom: 14px; }
+.calc-op { font-size: 20px; font-weight: 700; color: var(--accent); text-align: center; padding-bottom: 10px; }
+.ops-list { display: grid; gap: 8px; }
+.op-row { background: var(--surface2); border-radius: 10px; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+.op-name { font-size: 13px; color: var(--text2); }
+.op-val { font-size: 15px; font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.op-frac { font-size: 11px; color: var(--text3); margin-top: 2px; text-align: right; }
+.date-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+input[type="date"], input[type="time"] { color-scheme: dark; }
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+.section-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--input-bg); border: 1px solid var(--border); color: var(--text2); transition: all 0.2s; }
+.chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+.area-big { text-align: center; padding: 16px; }
+.area-num { font-size: 32px; font-weight: 800; color: var(--accent3); }
+.area-unit { font-size: 14px; color: var(--text2); margin-top: 2px; }
+/* Convert tab: two-col layout */
+.cv-row { display: grid; grid-template-columns: 1fr 36px 1fr; gap: 6px; align-items: end; margin-bottom: 8px; }
+.cv-mid { display: flex; align-items: center; justify-content: center; padding-bottom: 12px; font-size: 18px; color: var(--accent); }
+.cv-sel { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 6px; color: var(--text); font-size: 12px; outline: none; -webkit-appearance: none; margin-top: 4px; }
+.cv-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; font-weight: 600; }
+.sys-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+.sys-si { background: rgba(67,233,123,0.15); color: var(--accent3); }
+.sys-en { background: rgba(255,101,132,0.15); color: var(--accent2); }
+.tz-result { background: var(--surface2); border-radius: 10px; padding: 12px 14px; margin-top: 8px; border: 1px solid var(--border); }
+.tz-city { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.tz-time { font-size: 22px; font-weight: 700; color: var(--accent3); }
+.tz-date { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.tz-grid { display: grid; gap: 8px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <span class="hdr-icon">🧮</span>
+  <h1>Máy Tính Thông Minh</h1>
+  <span class="hdr-sub" id="today-date"></span>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" data-tab="0">➕ Cơ bản</div>
+    <div class="tab" data-tab="1">📊 Phần %</div>
+    <div class="tab" data-tab="2">📐 Tỉ lệ</div>
+    <div class="tab" data-tab="3">🏦 Lãi suất</div>
+    <div class="tab" data-tab="4">🎰 Trúng số</div>
+    <div class="tab" data-tab="5">📅 Thời gian</div>
+    <div class="tab" data-tab="6">🏠 Nhà cửa</div>
+    <div class="tab" data-tab="7">👥 Chia tiền</div>
+    <div class="tab" data-tab="8">🛍️ Mua sắm</div>
+    <div class="tab" data-tab="9">🔄 Đổi đơn vị</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- TAB 0: CƠ BẢN -->
+<div class="panel active" id="panel-0">
+  <div class="card">
+    <div class="card-title">📥 Nhập số</div>
+    <div class="calc-inputs">
+      <div class="field" style="margin:0"><label>Số A</label><input type="number" id="b0-a" placeholder="0" oninput="calcBasic()"></div>
+      <div class="calc-op">·</div>
+      <div class="field" style="margin:0"><label>Số B</label><input type="number" id="b0-b" placeholder="0" oninput="calcBasic()"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📤 Kết quả</div>
+    <div class="ops-list" id="b0-results">
+      <div class="op-row"><span class="op-name" style="color:var(--text3);font-size:12px">Nhập A và B để xem kết quả...</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: PHẦN TRĂM -->
+<div class="panel" id="panel-1">
+  <div class="card">
+    <div class="card-title">📥 Nhập số tiền & %</div>
+    <div class="chips" id="unit-chips1">
+      <div class="chip active" data-unit="ty">Tỉ</div>
+      <div class="chip" data-unit="trieu">Triệu</div>
+      <div class="chip" data-unit="k">K</div>
+    </div>
+    <div class="field"><label>Số tiền gốc</label><input type="number" id="b1-a" placeholder="Ví dụ: 15" oninput="calcPct()"></div>
+    <div class="field"><label>Phần trăm (%)</label><input type="number" id="b1-b" placeholder="Ví dụ: 5" oninput="calcPct()"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📤 Kết quả</div>
+    <div id="pct-results"><div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập số tiền và % để xem kết quả...</span></div></div>
+  </div>
+</div>
+
+<!-- TAB 2: TỈ LỆ (không có chips đơn vị) -->
+<div class="panel" id="panel-2">
+  <div class="card">
+    <div class="card-title">📥 Nhập số</div>
+    <div class="field"><label>Số A</label><input type="number" id="b2-a" placeholder="Ví dụ: 120" oninput="calcRatio()"></div>
+    <div class="field"><label>Số B</label><input type="number" id="b2-b" placeholder="Ví dụ: 150" oninput="calcRatio()"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📤 Kết quả</div>
+    <div id="ratio-results"><div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập A và B để xem kết quả...</span></div></div>
+  </div>
+</div>
+
+<!-- TAB 3: LÃI SUẤT -->
+<div class="panel" id="panel-3">
+  <div class="card">
+    <div class="card-title">📥 Nhập thông tin</div>
+    <div class="chips" id="unit-chips3">
+      <div class="chip active" data-unit="ty">Tỉ</div>
+      <div class="chip" data-unit="trieu">Triệu</div>
+      <div class="chip" data-unit="dong">Đồng</div>
+    </div>
+    <div class="field"><label>Vốn</label><input type="number" id="ls-von" placeholder="Ví dụ: 100000000" oninput="calcInterest()"></div>
+    <div class="field"><label>Lãi suất năm (%)</label><input type="number" id="ls-rate" placeholder="Ví dụ: 7.5" step="0.01" oninput="calcInterest()"></div>
+    <div class="field"><label>Số tháng</label><input type="number" id="ls-months" placeholder="Ví dụ: 12" oninput="calcInterest()"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📤 Kết quả</div>
+    <div class="result-grid">
+      <div class="result-row"><span class="result-label">Lãi / tháng</span><span class="result-val" id="ls-monthly">—</span></div>
+      <div class="result-row"><span class="result-label">Tổng lãi</span><span class="result-val" id="ls-total-int">—</span></div>
+      <div class="result-row"><span class="result-label">Tổng nhận được</span><span class="result-val accent" id="ls-grand">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: TRÚNG SỐ -->
+<div class="panel" id="panel-4">
+  <div class="card">
+    <div class="card-title">📥 Nhập thông tin</div>
+    <div class="chips" id="unit-chips4">
+      <div class="chip active" data-unit="ty">Tỉ</div>
+      <div class="chip" data-unit="trieu">Triệu</div>
+      <div class="chip" data-unit="dong">Đồng</div>
+    </div>
+    <div class="field"><label>💰 Tiền trúng (chỉnh để tính)</label><input type="number" id="lott-win" placeholder="Nhập tiền trúng..." oninput="calcLottFrom('win')"></div>
+    <div class="field"><label>🏦 Thuế 10% (chỉ xem)</label><input type="number" id="lott-tax" placeholder="—" readonly class="result-field"></div>
+    <div class="field"><label>✅ Tiền thực nhận (chỉnh để tính ngược)</label><input type="number" id="lott-net" placeholder="Nhập tiền thực nhận..." oninput="calcLottFrom('net')"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📊 Tóm tắt</div>
+    <div class="result-grid">
+      <div class="result-row"><span class="result-label">Tiền trúng</span><span class="result-val accent" id="lott-sum-win">—</span></div>
+      <div class="result-row"><span class="result-label">Thuế (10%)</span><span class="result-val neg" id="lott-sum-tax">—</span></div>
+      <div class="result-row"><span class="result-label">Thực nhận (90%)</span><span class="result-val" id="lott-sum-net">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: THỜI GIAN -->
+<div class="panel" id="panel-5">
+  <div class="card">
+    <div class="card-title">📥 Chọn ngày</div>
+    <div class="date-inputs">
+      <div class="field" style="margin:0"><label>Ngày bắt đầu</label><input type="date" id="date-start" oninput="calcDate()"></div>
+      <div class="field" style="margin:0"><label>Ngày kết thúc</label><input type="date" id="date-end" oninput="calcDate()"></div>
+    </div>
+    <button onclick="clearDates()" style="width:100%;padding:10px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:13px;cursor:pointer;">🔄 Xóa để dùng hôm nay</button>
+  </div>
+  <div class="card">
+    <div class="card-title">📤 Kết quả</div>
+    <div id="date-result" style="color:var(--text2);font-size:14px;text-align:center;padding:8px">Chọn ít nhất 1 ngày...</div>
+    <div id="date-sentence" style="display:none;background:var(--surface2);border-radius:10px;padding:14px;border:1px solid var(--border);font-size:14px;line-height:1.6;color:var(--text)"></div>
+  </div>
+</div>
+
+<!-- TAB 6: NHÀ CỬA -->
+<div class="panel" id="panel-6">
+  <div class="card">
+    <div class="card-title">📥 Thông tin bất động sản</div>
+    <div class="chips" id="unit-chips6">
+      <div class="chip active" data-unit="ty">Tỉ</div>
+      <div class="chip" data-unit="trieu">Triệu</div>
+      <div class="chip" data-unit="dong">Đồng</div>
+    </div>
+    <div class="field"><label>Chiều dài (m)</label><input type="number" id="nh-dai" placeholder="Ví dụ: 10" step="0.1" oninput="calcHouse()"></div>
+    <div class="field"><label>Chiều rộng (m)</label><input type="number" id="nh-rong" placeholder="Ví dụ: 5" step="0.1" oninput="calcHouse()"></div>
+    <div class="field"><label>Giá bán (để trống nếu chỉ tính diện tích)</label><input type="number" id="nh-gia" placeholder="Không bắt buộc" oninput="calcHouse()"></div>
+  </div>
+  <div class="card" id="house-results" style="display:none">
+    <div class="card-title">📤 Kết quả</div>
+    <div class="result-grid" id="house-grid"></div>
+  </div>
+</div>
+
+<!-- TAB 7: CHIA TIỀN -->
+<div class="panel" id="panel-7">
+  <div class="card">
+    <div class="card-title">📥 Nhập thông tin</div>
+    <div class="chips" id="unit-chips7">
+      <div class="chip" data-unit="ty">Tỉ</div>
+      <div class="chip" data-unit="trieu">Triệu</div>
+      <div class="chip active" data-unit="k">K</div>
+    </div>
+    <div class="field"><label>Tổng tiền</label><input type="number" id="sp-total" placeholder="Ví dụ: 275" oninput="calcSplit()"></div>
+    <div class="field"><label>Số người</label><input type="number" id="sp-people" placeholder="Ví dụ: 5" min="1" oninput="calcSplit()"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📤 Kết quả</div>
+    <div id="split-results"><div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập tổng tiền và số người...</span></div></div>
+  </div>
+</div>
+
+<!-- TAB 8: MUA SẮM -->
+<div class="panel" id="panel-8">
+  <div class="card">
+    <div class="card-title">🏷️ Giảm giá</div>
+    <div class="chips" id="unit-chips8">
+      <div class="chip" data-unit="ty">Tỉ</div>
+      <div class="chip" data-unit="trieu">Triệu</div>
+      <div class="chip active" data-unit="k">K</div>
+    </div>
+    <div class="field"><label>Giá gốc</label><input type="number" id="sh-price" placeholder="Ví dụ: 345" oninput="calcShop()"></div>
+    <div class="field"><label>% Giảm giá</label><input type="number" id="sh-disc" placeholder="Ví dụ: 20" oninput="calcShop()"></div>
+    <div id="shop-results" style="margin-top:10px"><div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập giá gốc và % giảm...</span></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📦 Giá theo đơn vị</div>
+    <div class="field"><label>Giá bán (tổng)</label><input type="number" id="sh-total" placeholder="Ví dụ: 90" oninput="calcUnit()"></div>
+    <div class="field"><label>Số lượng</label><input type="number" id="sh-qty" placeholder="Ví dụ: 3" min="1" oninput="calcUnit()"></div>
+    <div id="unit-results" style="margin-top:10px"><div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập giá bán và số lượng...</span></div></div>
+  </div>
+</div>
+
+<!-- TAB 9: ĐỔI ĐƠN VỊ (redesigned) -->
+<div class="panel" id="panel-9">
+
+  <!-- CHIỀU DÀI -->
+  <div class="card">
+    <div class="card-title">📏 Chiều dài</div>
+    <div class="cv-row">
+      <div>
+        <div class="cv-label">Hệ Anh/Mỹ <span class="sys-badge sys-en">EN</span></div>
+        <input type="number" id="len-en" placeholder="0" oninput="cvLen('en')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+        <select id="len-en-u" onchange="cvLen('en')" class="cv-sel">
+          <option value="in">inch (in)</option>
+          <option value="ft">foot (ft)</option>
+          <option value="yd">yard (yd)</option>
+          <option value="mi">mile (mi)</option>
+        </select>
+      </div>
+      <div class="cv-mid">⇄</div>
+      <div>
+        <div class="cv-label">Hệ SI <span class="sys-badge sys-si">SI</span></div>
+        <input type="number" id="len-si" placeholder="0" oninput="cvLen('si')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+        <select id="len-si-u" onchange="cvLen('en')" class="cv-sel">
+          <option value="mm">mm</option>
+          <option value="cm">cm</option>
+          <option value="m">m</option>
+          <option value="km">km</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- KHỐI LƯỢNG -->
+  <div class="card">
+    <div class="card-title">⚖️ Khối lượng</div>
+    <div class="cv-row">
+      <div>
+        <div class="cv-label">Hệ Anh/Mỹ <span class="sys-badge sys-en">EN</span></div>
+        <input type="number" id="wt-en" placeholder="0" oninput="cvWt('en')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+        <select id="wt-en-u" onchange="cvWt('en')" class="cv-sel">
+          <option value="oz">ounce (oz)</option>
+          <option value="lb">pound (lb)</option>
+        </select>
+      </div>
+      <div class="cv-mid">⇄</div>
+      <div>
+        <div class="cv-label">Hệ SI <span class="sys-badge sys-si">SI</span></div>
+        <input type="number" id="wt-si" placeholder="0" oninput="cvWt('si')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+        <select id="wt-si-u" onchange="cvWt('en')" class="cv-sel">
+          <option value="g">gram (g)</option>
+          <option value="kg">kilogram (kg)</option>
+          <option value="t">tấn (t)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- THỂ TÍCH -->
+  <div class="card">
+    <div class="card-title">🧴 Thể tích</div>
+    <div class="cv-row">
+      <div>
+        <div class="cv-label">Hệ Anh/Mỹ <span class="sys-badge sys-en">EN</span></div>
+        <input type="number" id="vol-en" placeholder="0" oninput="cvVol('en')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+        <select id="vol-en-u" onchange="cvVol('en')" class="cv-sel">
+          <option value="floz">fl oz (US)</option>
+          <option value="pt">pint (US)</option>
+          <option value="qt">quart (US)</option>
+          <option value="gal">gallon (US)</option>
+        </select>
+      </div>
+      <div class="cv-mid">⇄</div>
+      <div>
+        <div class="cv-label">Hệ SI <span class="sys-badge sys-si">SI</span></div>
+        <input type="number" id="vol-si" placeholder="0" oninput="cvVol('si')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+        <select id="vol-si-u" onchange="cvVol('en')" class="cv-sel">
+          <option value="ml">ml</option>
+          <option value="lit">lít (L)</option>
+          <option value="m3">m³</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- NHIỆT ĐỘ -->
+  <div class="card">
+    <div class="card-title">🌡️ Nhiệt độ</div>
+    <div class="cv-row">
+      <div>
+        <div class="cv-label">°F <span class="sys-badge sys-en">EN</span></div>
+        <input type="number" id="temp-f" placeholder="°F" oninput="cvTemp('f')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+      </div>
+      <div class="cv-mid">⇄</div>
+      <div>
+        <div class="cv-label">°C <span class="sys-badge sys-si">SI</span></div>
+        <input type="number" id="temp-c" placeholder="°C" oninput="cvTemp('c')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+      </div>
+    </div>
+  </div>
+
+  <!-- VẬN TỐC -->
+  <div class="card">
+    <div class="card-title">💨 Vận tốc</div>
+    <div class="cv-row">
+      <div>
+        <div class="cv-label">km/h</div>
+        <input type="number" id="spd-kmh" placeholder="km/h" oninput="cvSpd('kmh')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+      </div>
+      <div class="cv-mid">⇄</div>
+      <div>
+        <div class="cv-label">m/s</div>
+        <input type="number" id="spd-ms" placeholder="m/s" oninput="cvSpd('ms')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+      </div>
+    </div>
+  </div>
+
+  <!-- GIỜ VIỆT NAM ↔ UTC -->
+  <div class="card">
+    <div class="card-title">🕐 Giờ Việt Nam ↔ UTC</div>
+    <div class="cv-row">
+      <div>
+        <div class="cv-label">🇻🇳 Giờ VN (GMT+7)</div>
+        <input type="time" id="tz-vn" oninput="cvTzVnUtc('vn')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+      </div>
+      <div class="cv-mid">⇄</div>
+      <div>
+        <div class="cv-label">🌐 UTC (GMT+0)</div>
+        <input type="time" id="tz-utc" oninput="cvTzVnUtc('utc')" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+      </div>
+    </div>
+    <div id="tz-utc-note" style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center"></div>
+    <button onclick="tzNow()" style="width:100%;margin-top:8px;padding:9px;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:12px;cursor:pointer;">⏱ Dùng giờ hiện tại</button>
+  </div>
+
+  <!-- GIỜ VIỆT NAM → CÁC MÚI GIỜ KHÁC -->
+  <div class="card">
+    <div class="card-title">🌍 Giờ VN → Múi giờ khác</div>
+    <div id="tz-world-now" style="font-size:12px;color:var(--text3);margin-bottom:10px;text-align:center"></div>
+    <div class="field">
+      <label>Nhập giờ Việt Nam (để trống = dùng giờ hiện tại)</label>
+      <input type="time" id="tz-vn2" oninput="cvTzWorld()" style="width:100%;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:11px 14px;color:var(--text);font-size:15px;outline:none">
+    </div>
+    <div class="tz-grid" id="tz-world-grid"></div>
+  </div>
+
+</div><!-- /panel-9 -->
+
+</div><!-- /content -->
+
+<script>
+// ===== TABS =====
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+    if (t.dataset.tab === '9') initTzWorld();
+  });
+});
+
+// Today date
+const now = new Date();
+document.getElementById('today-date').textContent = now.toLocaleDateString('vi-VN');
+
+// ===== UNIT CHIPS =====
+// multipliers: ty=1e9, trieu=1e6, k=1000, dong=1
+const unitMultipliers = { ty: 1e9, trieu: 1e6, k: 1000, dong: 1 };
+const unitStates = { 1:'ty', 3:'dong', 4:'dong', 6:'dong', 7:'k', 8:'k' };
+
+document.querySelectorAll('.chips[id^="unit-chips"]').forEach(chips => {
+  const idx = chips.id.replace('unit-chips','');
+  chips.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      unitStates[idx] = chip.dataset.unit;
+      const calcMap = { 1:calcPct, 3:calcInterest, 6:calcHouse, 7:calcSplit, 8:() => { calcShop(); calcUnit(); } };
+      if (calcMap[idx]) calcMap[idx]();
+      if (idx === '4') { calcLottFrom('win'); }
+    });
+  });
+});
+
+function getMultiplier(idx) { return unitMultipliers[unitStates[idx] || 'dong']; }
+
+// ===== MONEY FORMAT =====
+function fmtMoney(val) {
+  let v = Math.round(val);
+  if (v === 0) return '0đ';
+  const neg = v < 0;
+  const av = Math.abs(v);
+  const ty  = Math.floor(av / 1e9);
+  const tr  = Math.floor((av % 1e9) / 1e6);
+  const k   = Math.floor((av % 1e6) / 1000);
+  const d   = av % 1000;
+  let kAdj = k + (d >= 500 ? 1 : 0);
+  let trAdj = tr, tyAdj = ty;
+  if (kAdj >= 1000) { trAdj += Math.floor(kAdj/1000); kAdj = kAdj % 1000; }
+  if (trAdj >= 1000) { tyAdj += Math.floor(trAdj/1000); trAdj = trAdj % 1000; }
+  let parts = [];
+  if (tyAdj > 0) parts.push(tyAdj + ' tỉ');
+  if (trAdj > 0) parts.push(trAdj + ' triệu');
+  if (kAdj > 0) parts.push(kAdj + 'k');
+  let result = parts.length ? parts.join(' ') : '0đ';
+  return (neg ? '-' : '') + result;
+}
+
+// ===== GCD =====
+function gcd(a, b) { a=Math.abs(Math.round(a)); b=Math.abs(Math.round(b)); while(b){[a,b]=[b,a%b];} return a; }
+
+function divResult(num, den) {
+  if (den===0) return { val:'Lỗi ÷0', frac:'' };
+  const r = num/den;
+  if (Number.isInteger(r)) return { val: r.toLocaleString('en-US'), frac:'' };
+  const dec = r.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+  let fracStr = '';
+  if (Number.isInteger(num) && Number.isInteger(den)) {
+    const g = gcd(Math.abs(num),Math.abs(den));
+    const fn=num/g, fd=den/g;
+    const sign = fd<0 ? -1 : 1;
+    fracStr = (sign*fn)+'/'+ Math.abs(fd);
+  }
+  return { val:dec, frac:fracStr };
+}
+
+// ===== TAB 0 =====
+function numFmt(v) {
+  if (!isFinite(v)) return v.toString();
+  if (Number.isInteger(v)) {
+    // #,### with comma separator
+    return v.toLocaleString('en-US');
+  }
+  // #,###.00 — always 2 decimal places, comma separator
+  return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function calcBasic() {
+  const a = parseFloat(document.getElementById('b0-a').value);
+  const b = parseFloat(document.getElementById('b0-b').value);
+  const container = document.getElementById('b0-results');
+
+  if (isNaN(a) || isNaN(b)) {
+    container.innerHTML = '<div class="op-row"><span class="op-name" style="color:var(--text3);font-size:12px">Nhập A và B để xem kết quả...</span></div>';
+    return;
+  }
+
+  const aS = numFmt(a), bS = numFmt(b);
+
+  function rowVal(val) {
+    const isNeg = val < 0;
+    const color = isNeg ? 'var(--accent2)' : 'var(--text)';
+    return `<span class="op-val" style="color:${color}">${numFmt(val)}</span>`;
+  }
+
+  function rowDiv(num, den) {
+    const r = divResult(num, den);
+    const isNeg = (num/den) < 0;
+    const color = isNeg ? 'var(--accent2)' : 'var(--text)';
+    let html = `<span class="op-val" style="color:${color}">${r.val}</span>`;
+    if (r.frac) html += `<div class="op-frac">${r.frac}</div>`;
+    return html;
+  }
+
+  function row(expr, valHtml) {
+    return `<div class="op-row"><span class="op-name">${expr}</span><div style="text-align:right">${valHtml}</div></div>`;
+  }
+
+  container.innerHTML = [
+    row(`${aS} + ${bS} =`, rowVal(a + b)),
+    row(`${aS} − ${bS} =`, rowVal(a - b)),
+    row(`${bS} − ${aS} =`, rowVal(b - a)),
+    row(`${aS} × ${bS} =`, rowVal(a * b)),
+    row(`${aS} ÷ ${bS} =`, rowDiv(a, b)),
+    row(`${bS} ÷ ${aS} =`, rowDiv(b, a)),
+  ].join('');
+}
+
+// ===== TAB 1 =====
+function calcPct() {
+  const unit = unitStates['1'] || 'ty';
+  const mult = unitMultipliers[unit];
+  const aRaw = parseFloat(document.getElementById('b1-a').value);
+  const b    = parseFloat(document.getElementById('b1-b').value);
+  const container = document.getElementById('pct-results');
+
+  // Build display label for the amount
+  const unitLabel = unit === 'ty' ? 'tỉ' : unit === 'trieu' ? 'triệu' : 'K';
+  const textSoTien = isNaN(aRaw) ? '?' : (numFmt(aRaw) + ' ' + unitLabel);
+
+  if (isNaN(aRaw) || isNaN(b)) {
+    container.innerHTML = '<div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập số tiền và % để xem kết quả...</span></div>';
+    return;
+  }
+
+  const a = aRaw * mult;
+  const inc  = fmtMoney(a * (1 + b / 100));
+  const dec  = fmtMoney(a * (1 - b / 100));
+  const ofA  = fmtMoney(a * b / 100);
+  const bS   = numFmt(b);
+
+  function row(label, val, cls) {
+    return `<div class="result-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <span class="result-label" style="font-size:12px">${label}</span>
+      <span class="result-val ${cls||''}" style="font-size:17px">${val}</span>
+    </div>`;
+  }
+
+  container.innerHTML = [
+    row(`${textSoTien} tăng ${bS}% =`, inc, ''),
+    row(`${textSoTien} giảm ${bS}% =`, dec, ''),
+    row(`${bS}% của ${textSoTien} =`, ofA, 'accent'),
+  ].join('');
+}
+
+// ===== TAB 2 =====
+function calcRatio() {
+  const a = parseFloat(document.getElementById('b2-a').value);
+  const b = parseFloat(document.getElementById('b2-b').value);
+  const container = document.getElementById('ratio-results');
+
+  if (isNaN(a) || isNaN(b)) {
+    container.innerHTML = '<div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập A và B để xem kết quả...</span></div>';
+    return;
+  }
+
+  const aS = numFmt(a), bS = numFmt(b);
+
+  function pct(num, den) {
+    if (den === 0) return '∞';
+    return numFmt(parseFloat((num/den*100).toFixed(2))) + '%';
+  }
+
+  const diffPct = (a !== 0 && b !== 0)
+    ? numFmt(parseFloat(Math.abs((b-a)/a*100).toFixed(2))) + '%'
+    : '—';
+
+  function row(label, val, cls) {
+    return `<div class="result-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <span class="result-label" style="font-size:12px">${label}</span>
+      <span class="result-val ${cls||''}" style="font-size:17px">${val}</span>
+    </div>`;
+  }
+
+  container.innerHTML = [
+    row(`${aS} là bao nhiêu % của ${bS}?`, pct(a,b), ''),
+    row(`${bS} là bao nhiêu % của ${aS}?`, pct(b,a), ''),
+    row(`Chênh lệch giữa ${aS} và ${bS} là`, diffPct, 'accent'),
+  ].join('');
+}
+
+// ===== TAB 3 =====
+function calcInterest() {
+  const mult = getMultiplier('3');
+  const von = parseFloat(document.getElementById('ls-von').value)*mult;
+  const rate = parseFloat(document.getElementById('ls-rate').value);
+  const months = parseFloat(document.getElementById('ls-months').value);
+  if (isNaN(von)||isNaN(rate)||isNaN(months)) { ['ls-monthly','ls-total-int','ls-grand'].forEach(id=>document.getElementById(id).textContent='—'); return; }
+  const monthly = von*rate/100/12;
+  const totalInt = monthly*months;
+  document.getElementById('ls-monthly').textContent = fmtMoney(monthly);
+  document.getElementById('ls-total-int').textContent = fmtMoney(totalInt);
+  document.getElementById('ls-grand').textContent = fmtMoney(von+totalInt);
+}
+
+// ===== TAB 4 =====
+let lottLock = false;
+function calcLottFrom(src) {
+  if (lottLock) return;
+  lottLock = true;
+  const mult = getMultiplier('4');
+  if (src==='win') {
+    const win = parseFloat(document.getElementById('lott-win').value)*mult;
+    if (!isNaN(win)) {
+      const tax=win*0.1, net=win*0.9;
+      document.getElementById('lott-tax').value = parseFloat((tax/mult).toFixed(4));
+      document.getElementById('lott-net').value = parseFloat((net/mult).toFixed(4));
+      document.getElementById('lott-sum-win').textContent = fmtMoney(win);
+      document.getElementById('lott-sum-tax').textContent = fmtMoney(tax);
+      document.getElementById('lott-sum-net').textContent = fmtMoney(net);
+    } else clearLott();
+  } else {
+    const net = parseFloat(document.getElementById('lott-net').value)*mult;
+    if (!isNaN(net)) {
+      const win=net/0.9, tax=win*0.1;
+      document.getElementById('lott-win').value = parseFloat((win/mult).toFixed(4));
+      document.getElementById('lott-tax').value = parseFloat((tax/mult).toFixed(4));
+      document.getElementById('lott-sum-win').textContent = fmtMoney(win);
+      document.getElementById('lott-sum-tax').textContent = fmtMoney(tax);
+      document.getElementById('lott-sum-net').textContent = fmtMoney(net);
+    } else clearLott();
+  }
+  lottLock = false;
+}
+function clearLott() { ['lott-sum-win','lott-sum-tax','lott-sum-net'].forEach(id=>document.getElementById(id).textContent='—'); }
+
+// ===== TAB 5 =====
+function calcDate() {
+  const startVal = document.getElementById('date-start').value;
+  const endVal   = document.getElementById('date-end').value;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const fmtDate = d => d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
+
+  const drEl = document.getElementById('date-result');
+  const dsEl = document.getElementById('date-sentence');
+
+  if (!startVal && !endVal) {
+    drEl.style.display = 'block';
+    dsEl.style.display = 'none';
+    return;
+  }
+
+  let start = startVal ? new Date(startVal) : null;
+  let end   = endVal   ? new Date(endVal)   : null;
+
+  const textStart = start ? 'ngày ' + fmtDate(start) : 'hôm nay';
+  const textEnd   = end   ? 'ngày ' + fmtDate(end)   : 'hôm nay';
+
+  const from = start || today;
+  const to   = end   || today;
+
+  const diffDays   = Math.round((to - from) / 86400000);
+  const absDays    = Math.abs(diffDays);
+  const absWeeks   = (absDays / 7).toFixed(1);
+  const absMonths  = (absDays / 30.44).toFixed(1);
+
+  let sentence;
+  if (diffDays === 0) {
+    sentence = `<b>${textStart}</b> và <b>${textEnd}</b> là cùng một ngày.`;
+  } else {
+    const dir = diffDays > 0 ? 'là' : 'là (ngược chiều)';
+    sentence = `Từ <b>${textStart}</b> đến <b>${textEnd}</b> ${dir}<br>
+      <span style="color:var(--accent3);font-size:22px;font-weight:800">${absDays.toLocaleString('en-US')} ngày</span><br>
+      <span style="color:var(--text2);font-size:13px">~ ${absWeeks} tuần &nbsp;·&nbsp; ~ ${absMonths} tháng</span>`;
+  }
+
+  drEl.style.display = 'none';
+  dsEl.style.display = 'block';
+  dsEl.innerHTML = sentence;
+}
+function clearDates() { document.getElementById('date-start').value=''; document.getElementById('date-end').value=''; calcDate(); }
+
+// ===== TAB 6 =====
+function calcHouse() {
+  const mult = getMultiplier('6');
+  const dai  = parseFloat(document.getElementById('nh-dai').value);
+  const rong = parseFloat(document.getElementById('nh-rong').value);
+  const gia  = parseFloat(document.getElementById('nh-gia').value)*mult;
+  if (isNaN(dai)||isNaN(rong)) { document.getElementById('house-results').style.display='none'; return; }
+  const area = dai*rong;
+  const grid = document.getElementById('house-grid');
+  let html = `<div class="result-row"><span class="result-label">Diện tích</span><span class="result-val accent">${area.toFixed(1)} m²</span></div>`;
+  if (!isNaN(gia)&&gia>0) {
+    const ppm2=gia/area, tile=area*1.1, paint=2*(dai+rong)*3;
+    html += `<div class="result-row"><span class="result-label">Giá tiền 1m²</span><span class="result-val">${fmtMoney(ppm2)}</span></div>`;
+    html += `<div class="result-row"><span class="result-label">Diện tích lát gạch (+10%)</span><span class="result-val">${tile.toFixed(1)} m²</span></div>`;
+    html += `<div class="result-row"><span class="result-label">Diện tích sơn tường</span><span class="result-val">${paint.toFixed(1)} m²</span></div>`;
+  }
+  grid.innerHTML = html;
+  document.getElementById('house-results').style.display='block';
+}
+
+// ===== TAB 7 =====
+function calcSplit() {
+  const unit = unitStates['7'] || 'k';
+  const mult = unitMultipliers[unit];
+  const totalRaw = parseFloat(document.getElementById('sp-total').value);
+  const people   = parseFloat(document.getElementById('sp-people').value);
+  const container = document.getElementById('split-results');
+
+  if (isNaN(totalRaw) || isNaN(people) || people <= 0) {
+    container.innerHTML = '<div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập tổng tiền và số người...</span></div>';
+    return;
+  }
+
+  const total = totalRaw * mult;
+  const each  = total / people;
+  const unitLabel = unit === 'ty' ? 'tỉ' : unit === 'trieu' ? 'triệu' : 'K';
+  const totalFmt  = numFmt(totalRaw) + ' ' + unitLabel;
+  const eachFmt   = fmtMoney(each);
+  const peopleFmt = numFmt(people);
+
+  container.innerHTML = `<div class="result-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+    <span class="result-label" style="font-size:12px">${totalFmt} ÷ ${peopleFmt} người</span>
+    <span style="font-size:13px;color:var(--text2)">Mỗi người trả:</span>
+    <span class="result-val" style="font-size:26px;color:var(--accent3)">${eachFmt}<span style="font-size:14px;color:var(--text2);font-weight:400"> / người</span></span>
+  </div>`;
+}
+
+// ===== TAB 8 =====
+function calcShop() {
+  const unit = unitStates['8'] || 'k';
+  const mult = unitMultipliers[unit];
+  const priceRaw = parseFloat(document.getElementById('sh-price').value);
+  const disc     = parseFloat(document.getElementById('sh-disc').value);
+  const container = document.getElementById('shop-results');
+  const unitLabel = unit === 'ty' ? 'tỉ' : unit === 'trieu' ? 'triệu' : 'K';
+
+  if (isNaN(priceRaw) || isNaN(disc)) {
+    container.innerHTML = '<div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập giá gốc và % giảm...</span></div>';
+    return;
+  }
+
+  const price = priceRaw * mult;
+  const after = price * (1 - disc / 100);
+  const save  = price - after;
+  const priceFmt = numFmt(priceRaw) + ' ' + unitLabel;
+  const discFmt  = numFmt(disc);
+
+  container.innerHTML = `
+    <div class="result-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <span class="result-label" style="font-size:12px">${priceFmt} giảm ${discFmt}% còn:</span>
+      <span class="result-val" style="font-size:22px">${fmtMoney(after)}</span>
+    </div>
+    <div class="result-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+      <span class="result-label" style="font-size:12px">Tiết kiệm được:</span>
+      <span class="result-val accent" style="font-size:22px">${fmtMoney(save)}</span>
+    </div>`;
+}
+
+function calcUnit() {
+  const unit = unitStates['8'] || 'k';
+  const mult = unitMultipliers[unit];
+  const totalRaw = parseFloat(document.getElementById('sh-total').value);
+  const qty      = parseFloat(document.getElementById('sh-qty').value);
+  const container = document.getElementById('unit-results');
+  const unitLabel = unit === 'ty' ? 'tỉ' : unit === 'trieu' ? 'triệu' : 'K';
+
+  if (isNaN(totalRaw) || isNaN(qty) || qty <= 0) {
+    container.innerHTML = '<div class="result-row"><span class="result-label" style="color:var(--text3);font-size:12px">Nhập giá bán và số lượng...</span></div>';
+    return;
+  }
+
+  const total = totalRaw * mult;
+  const unitPrice = total / qty;
+  const totalFmt = numFmt(totalRaw) + ' ' + unitLabel;
+  const qtyFmt   = numFmt(qty);
+
+  container.innerHTML = `<div class="result-row" style="flex-direction:column;align-items:flex-start;gap:4px">
+    <span class="result-label" style="font-size:12px">${totalFmt} ÷ ${qtyFmt} = giá mỗi cái:</span>
+    <span class="result-val" style="font-size:22px">${fmtMoney(unitPrice)}</span>
+  </div>`;
+}
+
+// ===== TAB 9: ĐỔI ĐƠN VỊ =====
+
+// --- Chiều dài (to meters) ---
+const lenToM = { in:0.0254, ft:0.3048, yd:0.9144, mi:1609.344, mm:0.001, cm:0.01, m:1, km:1000 };
+function cvLen(src) {
+  const enU = document.getElementById('len-en-u').value;
+  const siU = document.getElementById('len-si-u').value;
+  if (src==='en') {
+    const v = parseFloat(document.getElementById('len-en').value);
+    if (isNaN(v)) { document.getElementById('len-si').value=''; return; }
+    document.getElementById('len-si').value = fmtCv(v*lenToM[enU]/lenToM[siU]);
+  } else {
+    const v = parseFloat(document.getElementById('len-si').value);
+    if (isNaN(v)) { document.getElementById('len-en').value=''; return; }
+    document.getElementById('len-en').value = fmtCv(v*lenToM[siU]/lenToM[enU]);
+  }
+}
+
+// --- Khối lượng (to kg) ---
+const wtToKg = { oz:0.0283495, lb:0.453592, g:0.001, kg:1, t:1000 };
+function cvWt(src) {
+  const enU = document.getElementById('wt-en-u').value;
+  const siU = document.getElementById('wt-si-u').value;
+  if (src==='en') {
+    const v = parseFloat(document.getElementById('wt-en').value);
+    if (isNaN(v)) { document.getElementById('wt-si').value=''; return; }
+    document.getElementById('wt-si').value = fmtCv(v*wtToKg[enU]/wtToKg[siU]);
+  } else {
+    const v = parseFloat(document.getElementById('wt-si').value);
+    if (isNaN(v)) { document.getElementById('wt-en').value=''; return; }
+    document.getElementById('wt-en').value = fmtCv(v*wtToKg[siU]/wtToKg[enU]);
+  }
+}
+
+// --- Thể tích (to liters) ---
+const volToL = { floz:0.0295735, pt:0.473176, qt:0.946353, gal:3.78541, ml:0.001, lit:1, m3:1000 };
+function cvVol(src) {
+  const enU = document.getElementById('vol-en-u').value;
+  const siU = document.getElementById('vol-si-u').value;
+  if (src==='en') {
+    const v = parseFloat(document.getElementById('vol-en').value);
+    if (isNaN(v)) { document.getElementById('vol-si').value=''; return; }
+    document.getElementById('vol-si').value = fmtCv(v*volToL[enU]/volToL[siU]);
+  } else {
+    const v = parseFloat(document.getElementById('vol-si').value);
+    if (isNaN(v)) { document.getElementById('vol-en').value=''; return; }
+    document.getElementById('vol-en').value = fmtCv(v*volToL[siU]/volToL[enU]);
+  }
+}
+
+// --- Nhiệt độ ---
+function cvTemp(src) {
+  if (src==='f') {
+    const f = parseFloat(document.getElementById('temp-f').value);
+    if (isNaN(f)) { document.getElementById('temp-c').value=''; return; }
+    document.getElementById('temp-c').value = fmtCv((f-32)*5/9);
+  } else {
+    const c = parseFloat(document.getElementById('temp-c').value);
+    if (isNaN(c)) { document.getElementById('temp-f').value=''; return; }
+    document.getElementById('temp-f').value = fmtCv(c*9/5+32);
+  }
+}
+
+// --- Vận tốc ---
+function cvSpd(src) {
+  if (src==='kmh') {
+    const v = parseFloat(document.getElementById('spd-kmh').value);
+    if (isNaN(v)) { document.getElementById('spd-ms').value=''; return; }
+    document.getElementById('spd-ms').value = fmtCv(v/3.6);
+  } else {
+    const v = parseFloat(document.getElementById('spd-ms').value);
+    if (isNaN(v)) { document.getElementById('spd-kmh').value=''; return; }
+    document.getElementById('spd-kmh').value = fmtCv(v*3.6);
+  }
+}
+
+// --- VN ↔ UTC ---
+// Vietnam is UTC+7, no daylight saving
+// Note: some regions that Vietnam app users may compare to DO have DST — we use Intl.DateTimeFormat for those
+function cvTzVnUtc(src) {
+  if (src==='vn') {
+    const v = document.getElementById('tz-vn').value;
+    if (!v) { document.getElementById('tz-utc').value=''; document.getElementById('tz-utc-note').textContent=''; return; }
+    const [h,m] = v.split(':').map(Number);
+    let utcH = (h - 7 + 24) % 24;
+    document.getElementById('tz-utc').value = String(utcH).padStart(2,'0')+':'+String(m).padStart(2,'0');
+    const diff = h < 7 ? -1 : 0;
+    document.getElementById('tz-utc-note').textContent = diff ? `⚠️ UTC là ngày hôm trước` : `Cùng ngày`;
+  } else {
+    const v = document.getElementById('tz-utc').value;
+    if (!v) { document.getElementById('tz-vn').value=''; document.getElementById('tz-utc-note').textContent=''; return; }
+    const [h,m] = v.split(':').map(Number);
+    let vnH = (h + 7) % 24;
+    document.getElementById('tz-vn').value = String(vnH).padStart(2,'0')+':'+String(m).padStart(2,'0');
+    const diff = h + 7 >= 24 ? 1 : 0;
+    document.getElementById('tz-utc-note').textContent = diff ? `⚠️ Giờ VN là ngày hôm sau` : `Cùng ngày`;
+  }
+}
+
+function tzNow() {
+  const n = new Date();
+  const h = String(n.getHours()).padStart(2,'0');
+  const m = String(n.getMinutes()).padStart(2,'0');
+  document.getElementById('tz-vn').value = h+':'+m;
+  cvTzVnUtc('vn');
+}
+
+// --- VN → Thế giới ---
+// List of major world cities with their IANA timezone
+const worldZones = [
+  { city:'Tokyo, Nhật Bản',      tz:'Asia/Tokyo' },
+  { city:'Singapore',             tz:'Asia/Singapore' },
+  { city:'Bangkok, Thái Lan',     tz:'Asia/Bangkok' },
+  { city:'Seoul, Hàn Quốc',      tz:'Asia/Seoul' },
+  { city:'Bắc Kinh, Trung Quốc', tz:'Asia/Shanghai' },
+  { city:'Mumbai, Ấn Độ',        tz:'Asia/Kolkata' },
+  { city:'Dubai, UAE',            tz:'Asia/Dubai' },
+  { city:'Moscow, Nga',           tz:'Europe/Moscow' },
+  { city:'Paris, Pháp',          tz:'Europe/Paris' },
+  { city:'London, Anh',          tz:'Europe/London' },
+  { city:'New York, Mỹ',         tz:'America/New_York' },
+  { city:'Los Angeles, Mỹ',      tz:'America/Los_Angeles' },
+  { city:'Sydney, Úc',           tz:'Australia/Sydney' },
+];
+
+function initTzWorld() {
+  cvTzWorld();
+}
+
+function cvTzWorld() {
+  // Get VN time input or system time
+  const inp = document.getElementById('tz-vn2').value;
+  let baseDate;
+  if (inp) {
+    const [h,m] = inp.split(':').map(Number);
+    baseDate = new Date();
+    baseDate.setHours(h, m, 0, 0);
+  } else {
+    baseDate = new Date();
+  }
+  
+  // Show current VN time reference
+  const vnTime = baseDate.toLocaleTimeString('vi-VN', { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Ho_Chi_Minh' });
+  const vnDate = baseDate.toLocaleDateString('vi-VN', { weekday:'short', day:'2-digit', month:'2-digit', timeZone:'Asia/Ho_Chi_Minh' });
+  document.getElementById('tz-world-now').textContent = `🇻🇳 VN: ${vnTime} — ${vnDate}`;
+  
+  const grid = document.getElementById('tz-world-grid');
+  grid.innerHTML = worldZones.map(z => {
+    let timeStr = '—', dateStr = '';
+    try {
+      timeStr = baseDate.toLocaleTimeString('vi-VN', { hour:'2-digit', minute:'2-digit', timeZone: z.tz });
+      dateStr = baseDate.toLocaleDateString('vi-VN', { weekday:'short', day:'2-digit', month:'2-digit', timeZone: z.tz });
+    } catch(e) {}
+    return `<div class="tz-result">
+      <div class="tz-city">${z.city}</div>
+      <div class="tz-time">${timeStr}</div>
+      <div class="tz-date">${dateStr}</div>
+    </div>`;
+  }).join('');
+}
+
+// Auto refresh world time every 60s when on tab 9
+setInterval(() => {
+  const panel9 = document.getElementById('panel-9');
+  if (panel9.classList.contains('active')) {
+    const inp = document.getElementById('tz-vn2').value;
+    if (!inp) cvTzWorld(); // only auto-refresh if using system time
+  }
+}, 60000);
+
+// Helper: format converted number nicely
+function fmtCv(v) {
+  if (isNaN(v)) return '';
+  if (Math.abs(v) >= 1000) return parseFloat(v.toFixed(4));
+  if (Math.abs(v) >= 1)    return parseFloat(v.toFixed(6));
+  return parseFloat(v.toFixed(8));
+}
+</script>
+</body>
+</html>
