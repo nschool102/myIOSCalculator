@@ -1004,21 +1004,37 @@ function fmtCv(v) {
   return parseFloat(v.toFixed(8));
 }
 </script>
- <div id="build-info"
+<div id="build-info"
 style="
 text-align:center;
 font-size:10px;
 color:#999;
 margin-top:8px;">
+Đang kiểm tra phiên bản...
 </div>
 
 <script>
-document.getElementById("build-info").textContent =
-"Last update: " + new Date(document.lastModified).toLocaleString("vi-VN");
+
+fetch('./build.txt?ts=' + Date.now())
+  .then(r => r.text())
+  .then(v => {
+
+    document.getElementById('build-info').textContent =
+      'Build: ' + v.trim();
+
+  });
 
 if ('serviceWorker' in navigator) {
+
   navigator.serviceWorker.register('./sw.js')
+
     .then(reg => {
+
+      reg.update();
+
+      setInterval(() => {
+        reg.update();
+      }, 60000);
 
       reg.addEventListener('updatefound', () => {
 
@@ -1031,7 +1047,7 @@ if ('serviceWorker' in navigator) {
             navigator.serviceWorker.controller
           ) {
 
-            console.log('Có bản mới');
+            console.log('Đã tải bản mới');
 
           }
 
@@ -1040,7 +1056,10 @@ if ('serviceWorker' in navigator) {
       });
 
     });
+
 }
+
+</script>
 </script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 {
   "name": "Máy tính làm biếng",
-  "short_name": "Mái Tính",
+  "short_name": "Máy Tính",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff"
+  "background_color": "#0f0f1a",
+  "theme_color": "#1a1a2e"
 }
