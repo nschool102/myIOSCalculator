@@ -22,10 +22,8 @@ jobs:
 
       - name: Generate Build Version
         run: |
-
-          VERSION=$(date +"%Y-%m-%d %H:%M:%S")
-
-          echo "$VERSION" > build.txt
+          export TZ=Asia/Ho_Chi_Minh
+          echo "Build: $(date '+%H:%M:%S - %d/%m/%Y')" > build.txt
 
       - name: Commit Build Version
         run: |
