@@ -8,7 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Máy Tính">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#1a1a2e">
-<title>Máy Tính của Tao</title>
+  <link rel="manifest" href="manifest.json">
+<title>Máy tính làm biếng</title>
 <style>
 :root {
   --bg: #0f0f1a;
@@ -1003,17 +1004,42 @@ function fmtCv(v) {
   return parseFloat(v.toFixed(8));
 }
 </script>
-  <div style="
-  text-align:center;
-  font-size:10px;
-  color:#999;
-  margin-top:8px;
-">
-  Last updated at 18:19:20 - 07/06/26
+ <div id="build-info"
+style="
+text-align:center;
+font-size:10px;
+color:#999;
+margin-top:8px;">
 </div>
-  <script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js");
+
+<script>
+document.getElementById("build-info").textContent =
+"Last update: " + new Date(document.lastModified).toLocaleString("vi-VN");
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+    .then(reg => {
+
+      reg.addEventListener('updatefound', () => {
+
+        const newWorker = reg.installing;
+
+        newWorker.addEventListener('statechange', () => {
+
+          if (
+            newWorker.state === 'installed' &&
+            navigator.serviceWorker.controller
+          ) {
+
+            console.log('Có bản mới');
+
+          }
+
+        });
+
+      });
+
+    });
 }
 </script>
 </body>
