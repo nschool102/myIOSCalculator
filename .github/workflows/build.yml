@@ -1,0 +1,40 @@
+name: Auto Build Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build:
+
+    if: github.actor != 'github-actions[bot]'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Generate Build Version
+        run: |
+
+          VERSION=$(date +"%Y-%m-%d %H:%M:%S")
+
+          echo "$VERSION" > build.txt
+
+      - name: Commit Build Version
+        run: |
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add build.txt
+
+          git commit -m "update build version" || exit 0
+
+          git push
