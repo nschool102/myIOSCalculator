@@ -23,6 +23,7 @@ jobs:
       - name: Generate Build Version
         run: |
            export TZ=Asia/Ho_Chi_Minh
+           date
            echo "$(date '+%H:%M:%S - %d/%m/%Y (GMT+7)')" > build.txt
 
       - name: Commit Build Version
