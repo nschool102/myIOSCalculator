@@ -1,0 +1,32 @@
+name: Deploy Build Number
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update build number
+        run: |
+          echo "$(date '+%Y-%m-%d %H:%M:%S')" > build.txt
+
+      - name: Commit build file
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add build.txt
+
+          git diff --staged --quiet || (
+            git commit -m "Auto update build"
+            git push
+          )
